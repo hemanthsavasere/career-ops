@@ -94,6 +94,30 @@ On a ⛔ determination, add exactly one flag line at the top of Block B in the r
 
 The flag is additive only; ✅ / ➖ / ⚠️ emit no flag line.
 
+### Sponsorship concept (three-tier, extends the check above)
+
+The work-authorization check above answers "does the JD *say* it will sponsor?" For a candidate who needs sponsorship (`needs_sponsorship: true`), that binary is too lossy — most EU employers sponsor senior SWE roles without writing "we sponsor" in the posting. Add a **Sponsorship** tier that runs after the work-authorization check and folds into scoring (no new scoring dimension — it modulates Location / Red flags only):
+
+- `explicit_positive` — the JD explicitly offers visa sponsorship / relocation / work permit. Equals the ✅ Sponsors tier. Score-neutral or slight positive on Location.
+- `explicit_negative` — the JD explicitly refuses sponsorship ("no visa sponsorship", "must have existing work authorization"). Equals the ⛔ No sponsorship tier; remains a `hard_stop`.
+- `inferred_friendly` — the JD is silent (⚠️ Unstated) but **two or more** friendliness signals below are present.
+- `inferred_uncertain` — the JD is silent and fewer than two signals are present.
+- `not_needed` — role is inside `authorized_in` (equals ➖ Not needed).
+
+**Friendliness signals (each counts as one):**
+1. JD written in English for a non-Anglophone country (signals international hiring intent).
+2. Advertised salary present and ≥ the sponsor threshold for that country, read from `config/profile.yml` → `sponsorship.thresholds` (see `modes/_profile.md` "Your Sponsorship Policy").
+3. Company classified as public big tech / mature tech / agency or outsourcing vendor (the company types where senior-SWE sponsorship is routine — see `_shared.md` Company Type taxonomy).
+4. Role is Senior+ (the JD's seniority is at or above the candidate's floor).
+5. JD contains **none** of the explicit-negative phrases ("must already have work authorization", "EU/EEA citizens only", "no sponsorship").
+
+**Scoring (aligns with `modes/_profile.md` "Your Sponsorship Policy"):**
+- `explicit_positive` / `inferred_friendly` / `not_needed` — score-neutral (no Location penalty).
+- `inferred_uncertain` — a mild uncertainty discount on the Location dimension (typically −0.5), and record `sponsorship_uncertain` in `discard_reasons` when `final_decision` is not Apply.
+- `explicit_negative` — hard blocker (Location low, `hard_stop`, `no_sponsorship` discard reason), unchanged from the ⛔ tier.
+
+Record the tier in the report's `## Machine Summary` as `sponsorship:` (schema in `batch/batch-prompt.md`) and surface it in the Block A table as a `Sponsorship` row.
+
 ## Block B — Match with CV
 
 One table, one row per significant JD requirement, mapped to exact evidence in the primary files (`cv.md` first, then `article-digest.md`, `config/profile.yml`, `modes/_profile.md`). Block B **is** the requirement→evidence mapping for the whole report: never emit a second matrix that re-enumerates the same requirements, because nothing keeps two lists in sync and the first disagreement between them contradicts the report in a way no test can catch.

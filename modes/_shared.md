@@ -100,6 +100,8 @@ The evaluation scores five dimensions, integrated into one global score of 1-5. 
 6. **If no evidence exists for any `require` criterion** → score 3 by default, unless `culture_screen.deprioritize_if_absent: true` is set, in which case **cap this dimension at 2/5**.
 7. A role scoring 4.5+ overall but 2 or below on Cultural signals must carry an explicit warning in the report: "High technical fit, unconfirmed/poor culture fit — verify before applying."
 
+**Sponsorship signal (folds into Location / Red flags, no new dimension):** when `location.needs_sponsorship: true`, classify each role into a three-tier Sponsorship concept — `explicit_positive` / `inferred_friendly` / `explicit_negative` (plus `inferred_uncertain` for a silent JD with weak signals, and `not_needed` for roles inside `authorized_in`). It modulates the Location dimension and can set `no_sponsorship` / `sponsorship_uncertain` discard reasons. The full signal list, threshold comparison, and scoring rules live in `modes/oferta.md` (Block A "Sponsorship concept") and `modes/_profile.md` ("Your Sponsorship Policy") — this paragraph only fixes its place in the scoring model.
+
 ## Posting Legitimacy (Block G)
 
 Block G assesses whether a posting is likely a real, active opening. It does NOT affect the 1-5 global score -- it is a separate qualitative assessment.

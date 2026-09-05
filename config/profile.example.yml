@@ -77,6 +77,12 @@ location:
   country: "United States"
   city: "San Francisco"
   timezone: "PST"
+  # Your nationality/citizenship (distinct from `country`, which is your current
+  # residence). Used by the Sponsorship concept in job evaluation (modes/oferta.md
+  # → Block A) to separate "what passport I hold" from "where I live now" when a
+  # jurisdiction asks about citizenship or when sponsorship friendliness must be
+  # inferred. Optional — omit when citizenship equals country of residence.
+  nationality: "United States"
   visa_status: "No sponsorship needed"
   # Countries/regions where you ALREADY hold work authorization (no sponsorship
   # needed there). Drives the Work-Authorization signal in job evaluation

@@ -340,8 +340,9 @@ risk_level: "{Low | Medium | High}"
 confidence: "{Low | Medium | High}"
 next_action: "{one concrete next step}"
 work_auth: "{sponsors | not_needed | unstated | no_sponsorship}"
+sponsorship: "{explicit_positive | inferred_friendly | inferred_uncertain | explicit_negative | not_needed}"
 discard_reasons:
-  - "{predicted reason if final_decision is Skip/Consider, e.g. salary_too_low, hybrid_required, tech_stack_mismatch, seniority_mismatch, geo_restriction, size_mismatch, company_culture, or other specific reason}"
+  - "{predicted reason if final_decision is Skip/Consider, e.g. salary_too_low, hybrid_required, tech_stack_mismatch, seniority_mismatch, geo_restriction, size_mismatch, company_culture, no_sponsorship, sponsorship_uncertain, or other specific reason}"
 via: {agency/recruiter firm as a quoted string, or null for direct applications}
 company_confidential: {true when the end employer is unknown (company is "?"), else false}
 advertised_comp: {verbatim JD salary/range as a quoted string (e.g. "80-90k EUR"), or null when the JD states nothing}
@@ -370,6 +371,7 @@ Rules:
 - Do not invent missing data. If confidence is limited, set `confidence: "Low"` and explain the limitation in the human-readable sections.
 - `work_auth` reflects the Block A work-authorization tier: `no_sponsorship` only when the JD **explicitly** refuses sponsorship for a role outside the candidate's `authorized_in`; `unstated` when the JD is silent (neutral, not a blocker); `not_needed` when the role is within `authorized_in` or sponsorship isn't required; `sponsors` when the JD explicitly offers it.
 - `requirement_importance` mirrors Block B's table row by row — same rows, same verdicts, snake_cased. `evidence: stated` **requires** a non-null verbatim `jd_signal`; `jd_signal: null` is legal only for `structural` and `inferred`. `importance` is never `critical` or `high` when `evidence: inferred` — that is Block B's gate, machine-checkable here. `match` is `strong | partial | missing | na`, mirroring ✅ / ⚠️ / ❌ / ➖. Use `[]` when the JD yields no usable requirement list. No consumer reads this key yet; it is allowlisted so it round-trips.
+- `sponsorship` reflects the three-tier Sponsorship concept (see `modes/oferta.md` Block A "Sponsorship concept"): `explicit_positive` when the JD offers sponsorship/relocation, `explicit_negative` when it refuses (also a `hard_stop`), `not_needed` when the role is within `authorized_in`, and — when the JD is silent — `inferred_friendly` if two or more friendliness signals are present, otherwise `inferred_uncertain`. A silent JD is never `explicit_negative`.
 - `risk_summary` mirrors the `## Risk Summary` block row by row — same source verdicts, snake_cased: `legitimacy` from the Block G tier (`high_confidence` / `proceed_with_caution` / `suspicious`), `culture` from the Block A Culture screen (`pass` / `caution` / `fail`), `interview_redflags` from the red-flag file's warning level (`none` / `caution` / `warning`), `ai_screening_disclosure` from the Block G AI-screening disclosure signal (`disclosed` when the posting names AI/automated screening, `corroborating_only` when the jurisdiction requires disclosure and the posting is silent, `no_match` when the candidate's jurisdiction has no table row). Any row rendered `— not evaluated` (or `— no interview sessions yet`) is `not_evaluated` here. Never invent a value the block does not show.
 
 ### Step 3 — Save the Report
@@ -418,8 +420,9 @@ risk_level: "{Low | Medium | High}"
 confidence: "{Low | Medium | High}"
 next_action: "{one concrete next step}"
 work_auth: "{sponsors | not_needed | unstated | no_sponsorship}"
+sponsorship: "{explicit_positive | inferred_friendly | inferred_uncertain | explicit_negative | not_needed}"
 discard_reasons:
-  - "{predicted reason if final_decision is Skip/Consider, e.g. salary_too_low, hybrid_required, tech_stack_mismatch, seniority_mismatch, geo_restriction, size_mismatch, company_culture, or other specific reason}"
+  - "{predicted reason if final_decision is Skip/Consider, e.g. salary_too_low, hybrid_required, tech_stack_mismatch, seniority_mismatch, geo_restriction, size_mismatch, company_culture, no_sponsorship, sponsorship_uncertain, or other specific reason}"
 via: {agency/recruiter firm as a quoted string, or null for direct applications}
 company_confidential: {true when the end employer is unknown (company is "?"), else false}
 advertised_comp: {verbatim JD salary/range as a quoted string (e.g. "80-90k EUR"), or null when the JD states nothing}
